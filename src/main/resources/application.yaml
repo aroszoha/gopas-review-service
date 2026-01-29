@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: review-service
+  profiles:
+    active: dev
+
+  mongodb:
+    uri: mongodb://192.168.56.101/reviews
+
+server:
+  port: 7002
