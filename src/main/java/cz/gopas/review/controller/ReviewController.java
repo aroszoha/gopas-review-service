@@ -11,14 +11,14 @@ public interface ReviewController {
     @GetMapping("/reviews")
     public List<Review> getReviews();
 
-    @GetMapping("/reviews/{id}")
-    public ResponseEntity<Review> getReview(@PathVariable("id") String id);
+    @GetMapping("/review")
+    public ResponseEntity<Review> getReview(@RequestParam("id") String id);
 
-    @PostMapping("/reviews")
+    @PostMapping("/review")
 //    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Review> createReview(@RequestBody Review newReview);
 
-    @DeleteMapping("/reviews/{id}")
-    public ResponseEntity<Review> deleteReview(@PathVariable("id") String id);
+    @DeleteMapping("/review")
+    public ResponseEntity<Review> deleteReview(@RequestParam("id") String id);
 
 }
