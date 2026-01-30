@@ -3,12 +3,14 @@ package cz.gopas.review.controller;
 import cz.gopas.review.bean.BookDTO;
 import cz.gopas.review.bean.Review;
 import cz.gopas.review.persistence.Storage;
+import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
@@ -51,17 +53,12 @@ public class ReviewControllerV1 implements ReviewController {
 
     @Override
     public ResponseEntity<Review> createReview(Review newReview) {
-        try {
-            BookDTO receivedBook = bookClient.getBook(newReview.getBookId());
-            log.info(receivedBook.toString());
-            Review result = storage.createBook(newReview);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .header("X-ReviewID", String.valueOf(result.getId()))
-                    .body(result);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().build();
-        }
+        BookDTO receivedBook = bookClient.getBook(newReview.getBookId());
+        log.info(receivedBook.toString());
+        Review result = storage.createBook(newReview);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                            .header("X-ReviewID", String.valueOf(result.getId()))
+                            .body(result);
     }
 
     @Override
@@ -76,4 +73,11 @@ public class ReviewControllerV1 implements ReviewController {
                     .build();
         }
     }
+
+    @ExceptionHandler(FeignException.class)
+    public ResponseEntity<String> handleFeignError(FeignException ex) {
+        log.error("Feign client thrown an error: {}", ex);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.toString());
+    }
+
 }
