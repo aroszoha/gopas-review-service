@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class FrontendController {
 
-    @GetMapping("/home")
+    @GetMapping("/private")
     public String getGreeting() {
         return "index";
     }
