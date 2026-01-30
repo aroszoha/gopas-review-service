@@ -11,4 +11,4 @@ server:
   port: 7002
 
 custom:
-  book-service-base-url: http://localhost:8090/v1/books/
+  book-service-base-url: http://localhost:8090/v1/

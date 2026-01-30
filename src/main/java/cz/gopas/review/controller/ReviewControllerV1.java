@@ -1,11 +1,13 @@
 package cz.gopas.review.controller;
 
+import cz.gopas.review.bean.BookDTO;
 import cz.gopas.review.bean.Review;
 import cz.gopas.review.persistence.Storage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,8 +24,11 @@ public class ReviewControllerV1 implements ReviewController {
     @Autowired
     private Storage storage;
 
+//    @Autowired
+//    private RestTemplate bookServiceClient;
+
     @Autowired
-    private RestTemplate bookServiceClient;
+    private BookClient bookClient;
 
     @Value("${custom.book-service-base-url}")
     private String bookServiceBaseURL;
@@ -47,8 +52,8 @@ public class ReviewControllerV1 implements ReviewController {
     @Override
     public ResponseEntity<Review> createReview(Review newReview) {
         try {
-            ResponseEntity<String> serviceResult = bookServiceClient.getForEntity(bookServiceBaseURL + newReview.getBookId(), String.class);
-            log.info(serviceResult.getBody());
+            BookDTO receivedBook = bookClient.getBook(newReview.getBookId());
+            log.info(receivedBook.toString());
             Review result = storage.createBook(newReview);
             return ResponseEntity.status(HttpStatus.CREATED)
                     .header("X-ReviewID", String.valueOf(result.getId()))
